@@ -36,16 +36,91 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+
+#[GET] /people Get a list of all the people in the database. DONE
+@app.route('/people', methods=['GET'])
+def get_people():
 
     response_body = {
         "msg": "Hello, this is your GET /user response "
     }
+    return jsonify(response_body), 200
+
+
+#[GET] /people/<int:people_id> Get one single person's information. DONE
+@app.route('/people/<int:people_id>', methods=['GET'])
+def get_one_person():
+    response_body = {
+        "text and things about one person"
+    }
 
     return jsonify(response_body), 200
+
+
+#[GET] /planets Get a list of all the planets in the database. DONE
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    response_body = {
+        "planet text"
+    }
+    return jsonify(response_body), 200
+
+
+#[GET] /planets/<int:planet_id> Get one single planet's information. DONE
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_one_planet():
+    response_body = {
+        "single planet texty stuffs"
+    }
+    return jsonify(response_body), 200
+
+#[GET] /users Get a list of all the blog post users.
+@app.route('/users/', methods=['GET'])
+def user_list():
+    response_body = {
+        "list of all users bingboom"
+    }
+    return jsonify(response_body), 200
+
+
+#[GET] /users/<int:user_id>/favorites Get all the favorites that belong to the current user.
+@app.route('/users/<int:user_id>/favorites', methods= ['GET'])
+def all_user_favorites():
+    response_body = {
+        "get all the favorites that belong to current user"
+    }
+    return jsonify(response_body), 200
+
+
+#[POST] /favorite/planet/<int:planet_id> Add a new favorite planet to the current user with the planet id = planet_id.
+@app.route('/favorite/planet/<int:planet_id>', methods = ['POST'])
+def add_new_favorite_planet():
+    response_body = {
+        "Adds a new favorite planet to the current user with the planet id = planet_id"
+    }
+    return jsonify(response_body), 200
+
+
+#[POST] /favorite/people/<int:people_id> Add new favorite people to the current user with the people id = people_id.
+@app.route('/favorite/people/<int:people_id>', methods = ['POST'])
+def add_new_favorite_person():
+    response_body = {
+        "Adds a new favorite planet to the current user with the person id = person_id"
+    }
+    return jsonify(response_body), 200
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
+
+
+#Create an API that connects to a database and implements the following endpoints (very similar to SWAPI.dev or SWAPI.tech):
+#Additionally, create the following endpoints to allow your StarWars blog to have users and favorites:
+#
+
+#[DELETE] /favorite/planet/<int:planet_id> Delete a favorite planet with the id = planet_id.
+#[DELETE] /favorite/people/<int:people_id> Delete a favorite people with the id = people_id.
+#Your current API does not have an authentication system (yet), which is why the only way to create users is directly on the database using the Flask admin.
