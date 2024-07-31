@@ -56,6 +56,7 @@ def get_one_character():
 @app.route('/planets', methods=['GET'])
 def get_planets():
     planets = Planets.query.all()
+    serialized_planets= [Planets.serialize() for Planets in planets]
     return jsonify(Planets.serialize() for Planets in planets), 200
 
 
