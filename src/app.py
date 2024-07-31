@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Planets, Characters, Favorites
 #from models import Person
 
 app = Flask(__name__)
@@ -37,59 +37,60 @@ def sitemap():
     return generate_sitemap(app)
 
 
-#[GET] /people Get a list of all the people in the database. DONE
-@app.route('/people', methods=['GET'])
-def get_people():
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-    return jsonify(response_body), 200
+#[GET] /characters Get a list of all the characters in the database. DONE
+@app.route('/characters', methods=['GET'])
+def characters():
+    Characters=Characters.query.all()
+    serialized_character = [Characters.serialize() for Characters in characters]
+    return jsonify(serialized_character)
 
 
-#[GET] /people/<int:people_id> Get one single person's information. DONE
-@app.route('/people/<int:people_id>', methods=['GET'])
-def get_one_person():
-    response_body = {
-        "text and things about one person"
-    }
-
+#[GET] /characters/<int:characters_id> Get one single person's information. DONE
+@app.route('/characters/<int:characters_id>', methods=['GET'])
+def get_one_character():
+    Characters= Characters.query.all(id)
     return jsonify(response_body), 200
 
 
 #[GET] /planets Get a list of all the planets in the database. DONE
 @app.route('/planets', methods=['GET'])
 def get_planets():
-    response_body = {
-        "planet text"
-    }
-    return jsonify(response_body), 200
+    planets = Planets.query.all()
+    return jsonify(Planets.serialize() for Planets in planets), 200
 
 
 #[GET] /planets/<int:planet_id> Get one single planet's information. DONE
 @app.route('/planets/<int:planet_id>', methods=['GET'])
 def get_one_planet():
-    response_body = {
-        "single planet texty stuffs"
-    }
-    return jsonify(response_body), 200
+    planets= Planets.query.all(id)
+    if planets is None:
+        raise APIException("person not found", status_code=404)
+    return jsonify(Planets.serialize()), 200
 
 #[GET] /users Get a list of all the blog post users.
-@app.route('/users/', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def user_list():
+    users= User.query.all()
     response_body = {
         "list of all users bingboom"
     }
-    return jsonify(response_body), 200
+    return jsonify([User.serialize() for User in users]),  200
+
+#GET SINGLE USER
+@app.route('/users/<int:id>', methods= ['GET'])
+def get_single_user():
+    users= User.query.get(id)
+    return jsonify(User.serialize()), 200 
 
 
 #[GET] /users/<int:user_id>/favorites Get all the favorites that belong to the current user.
 @app.route('/users/<int:user_id>/favorites', methods= ['GET'])
 def all_user_favorites():
+    favorites= Favorites.query.all(id)
     response_body = {
         "get all the favorites that belong to current user"
     }
-    return jsonify(response_body), 200
+    return jsonify(Favorites.serialize()), 200
 
 
 #[POST] /favorite/planet/<int:planet_id> Add a new favorite planet to the current user with the planet id = planet_id.
@@ -98,12 +99,12 @@ def add_new_favorite_planet():
     response_body = {
         "Adds a new favorite planet to the current user with the planet id = planet_id"
     }
-    return jsonify(response_body), 200
+    return jsonify(Favorites.serialize()), 200
 
 
-#[POST] /favorite/people/<int:people_id> Add new favorite people to the current user with the people id = people_id.
-@app.route('/favorite/people/<int:people_id>', methods = ['POST'])
-def add_new_favorite_person():
+#[POST] /favorite/characters/<int:characters_id> Add new favorite characters to the current user with the characters id = characters_id.
+@app.route('/favorite/characters/<int:characters_id>', methods = ['POST'])
+def add_new_favorite_character():
     response_body = {
         "Adds a new favorite planet to the current user with the person id = person_id"
     }
@@ -122,5 +123,5 @@ if __name__ == '__main__':
 #
 
 #[DELETE] /favorite/planet/<int:planet_id> Delete a favorite planet with the id = planet_id.
-#[DELETE] /favorite/people/<int:people_id> Delete a favorite people with the id = people_id.
+#[DELETE] /favorite/characters/<int:characters_id> Delete a favorite characters with the id = characters_id.
 #Your current API does not have an authentication system (yet), which is why the only way to create users is directly on the database using the Flask admin.
